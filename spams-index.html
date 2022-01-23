@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SPAMS Server</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 1em;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th>Developer</th>
+        <th>Module</th>
+        <th>I/O Data</th>
+      </tr>
+      <tr>
+        <td rowspan="4">Yan Hui</td>
+      </tr>
+      <tr>
+        <td>BBBW1_Motion</td>
+        <td>
+          <div id="motionDiv"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>BBBW1_Buzzer</td>
+        <td>
+          <button type="button" onclick="BBBW1_Buzzer()">Send Buzz!</button>
+        </td>
+      </tr>
+      <tr>
+        <td>BBBW1_Servo</td>
+        <td>
+          <div id="servoVal">50</div>
+          <div id="servoDiv">
+            <input type="range" min="1" max="100" value="50" id="servoRange" />
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td rowspan="4">Lawrence</td>
+      </tr>
+      <tr>
+        <td>BBBW2_Motion</td>
+      </tr>
+      <tr>
+        <td>BBBW2_Sensor</td>
+      </tr>
+      <tr>
+        <td>BBBW2_Sensor</td>
+      </tr>
+      <tr>
+        <td rowspan="4">Daniel</td>
+      </tr>
+      <tr>
+        <td>BBBW3_Precipitation</td>
+        <td><div id="preDiv"></div></td>
+      </tr>
+      <tr>
+        <td>BBBW3_Sunlight</td>
+        <td><div id="luxDiv"></div></td>
+      </tr>
+      <tr>
+        <td>BBBW3_Windspeed</td>
+        <td><div id="windDiv"></div></td>
+      </tr>
+      <tr>
+        <td rowspan="4">Aiman</td>
+      </tr>
+      <tr>
+        <td>BBBW4_Moist</td>
+        <td><div id="moistDiv"></div></td>
+      </tr>
+      <tr>
+        <td>BBBW4_Temp</td>
+        <td><div id="tempDiv"></div></td>
+      </tr>
+      <tr>
+        <td>BBBW4_Salinity</td>
+        <td><div id="saliDiv"></div></td>
+      </tr>
+    </table>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io();
+
+      var servoSlider = document.getElementById("servoRange");
+      var servoVal = document.getElementById("servoVal");
+
+      // Yan Hui's Functions
+
+      function BBBW1_Buzzer() {
+        socket.emit("BBBW1_Buzzer");
+      }
+
+      socket.on("BBBW1_Motion", function (motionData) {
+        document.getElementById("motionDiv").textContent = motionData;
+      });
+
+      servoSlider.onchange = function () {
+        wservoVal.textContent = servoSlider.value;
+        socket.emit("BBBW1_Servo", Number(servoVal.textContent));
+      };
+
+      // Daniel's Functions
+
+      socket.on("BBBW3_Lux", function (luxData) {
+        document.getElementById("luxDiv").textContent = Math.round(luxData);
+      });
+
+      socket.on("BBBW3_Wind", function (windData) {
+        document.getElementById("windDiv").textContent = windData;
+      });
+      socket.on("BBBW3_Precipitation", function (preData) {
+        document.getElementById("preDiv").textContent = preData;
+      });
+
+      // Aiman's Functions
+
+      socket.on("BBBW4_Moist", function (moistData) {
+        document.getElementById("moistDiv").textContent = moistData.toFixed(3);
+      });
+
+      socket.on("BBBW4_Temp", function (tempData) {
+        document.getElementById("tempDiv").textContent = tempData.toFixed(2);
+      });
+      socket.on("BBBW4_Salinity", function (saliData) {
+        document.getElementById("saliDiv").textContent = Math.round(saliData);
+      });
+    </script>
+  </body>
+</html>
